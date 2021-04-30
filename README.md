@@ -1,1 +1,1 @@
-It includes the coding samples from my C++ studies
+It includes the coding samples from Udacity Class C++ studies
