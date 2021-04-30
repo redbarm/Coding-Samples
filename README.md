@@ -1,2 +1,1 @@
-# Coding-Samples
-Coding Samples
+It includes the coding samples from my C++ studies
