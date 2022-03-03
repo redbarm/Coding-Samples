@@ -5,8 +5,8 @@
 using std::string;
 using std::iostream;
 
-namespace pic{
-namespace am{
+namespace nmspc1{
+namespace nmspc2{
 
 class obj    
 {
