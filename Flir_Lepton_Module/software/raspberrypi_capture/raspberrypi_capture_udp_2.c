@@ -61,7 +61,7 @@ uint8_t lepton_frame_packet[VOSPI_FRAME_SIZE];
 static unsigned int lepton_image[80][80];
 static unsigned int udp_image[6400];
 
-static void save_pgm_file(void)
+static void capture(void)
 {
 	int i;
 	int j;
@@ -69,24 +69,6 @@ static void save_pgm_file(void)
 	unsigned int minval = UINT_MAX;
 	char image_name[32];
 	int image_index = 0;
-
-	do {
-		sprintf(image_name, "IMG_%.4d.pgm", image_index);
-		image_index += 1;
-		if (image_index > 9999)
-		{
-			image_index = 0;
-			break;
-		}
-
-	} while (access(image_name, F_OK) == 0);
-
-	FILE *f = fopen(image_name, "w");
-	if (f == NULL)
-	{
-		printf("Error opening file!\n");
-		exit(1);
-	}
 
 	printf("Calculating min/max values for proper scaling...\n");
 	
@@ -105,24 +87,15 @@ static void save_pgm_file(void)
 	printf("maxval = %u\n",maxval);
 	printf("minval = %u\n",minval);
 	
-	fprintf(f,"P2\n80 60\n%u\n",maxval-minval);
 	int indx=0;
 	for(i=0;i<60;i++)
 	{
 		for(j=0;j<80;j++)
 		{
-			fprintf(f,"%d ", lepton_image[i][j] - minval);
-			udp_image[indx]= lepton_image[i][j] - minval; //It works
-			//sprintf(text,"%d",lepton_image[i][j]-minval);
-			//udp_image[indx][6]= text;
-			//udp_image[indx]= text;
+			udp_image[indx]= lepton_image[i][j] - minval;
 			indx=indx+1;
 		}
-		fprintf(f,"\n");
 	}
-	fprintf(f,"\n\n");
-
-	fclose(f);
 }
 
 int transfer(int fd)
@@ -168,31 +141,7 @@ int main(int argc, char *argv[])
     char *hello = "Hello from server";
     struct sockaddr_in servaddr, cliaddr;
 	//int test_array[]={1,2,3,4,5,6}; //It does not work!!
-	const char *str="12345";
-	int iarray[5]={100,200,300,400,500};
-	char test_array[100];
-	for (int i=0;i<5;i++){
-		//test_array[i]= 'A';
-		test_array[i]=iarray[i]+'0';
-		//test_array[i]=(char)iarray[i];
-	}
-	test_array[5]= '\0';
-
-	printf("Test_Array in char: %s \n", iarray);
-	//int rst=(int)(test_array[2][2])-48;
-	//printf("Test_Array in integer w '0': %d \n",(int)(test_array[1])-48);
-	printf("Test_Array in integer: %d \n",(iarray));
-	int rst=atoi(str);
-	//printf("Test_Array in integer w atoi:%d \n",rst); 
-
-	size_t s,l;
-	s=sizeof(iarray);
-	//l=strlen(test_array);//??????????????
-	l=sizeof(iarray)/ sizeof(int);
-
-	printf("Amina kodumun image sizeof u: %d \n",s); // 4 byts times the nmber of array
-	printf("Amina kodumun image array size i: %d \n",l);
-
+	for (int ply=1;1000;ply++){
 	fd = open(device, O_RDWR);
 	if (fd < 0)
 	{
@@ -243,7 +192,7 @@ int main(int argc, char *argv[])
 
 	close(fd);
 
-	save_pgm_file();
+	capture();
 
 	// Creating socket file descriptor
     if ( (sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0 ) {
@@ -276,20 +225,8 @@ int main(int argc, char *argv[])
                 &len);
     buffer[n] = '\0';
     printf("Client : %s\n", buffer);
-
-    //sendto(sockfd, (const char *)hello, strlen(hello), 
-    //    MSG_CONFIRM, (const struct sockaddr *) &cliaddr,
-    //        len);
-
-	int img_size=sizeof(lepton_image);
-	int img_str=strlen(lepton_image);
-	// Always use CHAR!! the below expressions always work
-	//char test_array[]="123456";
-	//char test_array[]={'1','2','3','4','5','6','\0'};
-	//int test_array[100]={1,2,3,4,5,6}; //It does not work!!
-	//printf("Amina kodumun image sizeof u: %d \n",sizeof(test_array));
-	//printf("Amina kodumun image strlen i: %d \n",strlen(test_array));
 	
+	printf("size of udp_image %d \n",sizeof(udp_image));
 	sendto(sockfd, udp_image , sizeof(udp_image), 
         MSG_CONFIRM, (const struct sockaddr *) &cliaddr,
             len);
@@ -297,7 +234,7 @@ int main(int argc, char *argv[])
     printf("%s",udp_image);
 	printf("Hello message sent.\n"); 
 	close(sockfd);
-
+	}
 
 	return ret;
 }

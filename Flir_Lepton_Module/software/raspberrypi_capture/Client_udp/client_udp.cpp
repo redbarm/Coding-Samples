@@ -2,6 +2,7 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <opencv2/opencv.hpp>
 
 int main(void){
     int socket_desc;
@@ -27,7 +28,7 @@ int main(void){
     // Set port and IP:
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(8080);
-    server_addr.sin_addr.s_addr = inet_addr("10.213.122.137");
+    server_addr.sin_addr.s_addr = inet_addr("10.213.122.138");
     
     // Get input from the user:
     //printf("Enter message: ");

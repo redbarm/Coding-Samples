@@ -1,5 +1,5 @@
 
-TARGET = raspberrypi_capture_udp
+TARGET = raspberrypi_capture_udp_2
 LIBS = -lm
 CC = gcc
 CFLAGS = -g -Wall
