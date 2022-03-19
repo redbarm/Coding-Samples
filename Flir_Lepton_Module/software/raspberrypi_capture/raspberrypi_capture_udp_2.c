@@ -115,8 +115,9 @@ int transfer(int fd)
 
 	ret = ioctl(fd, SPI_IOC_MESSAGE(1), &tr);
 	if (ret < 1)
+		//printf("Not Ok");
 		pabort("can't send spi message");
-
+		
 	if(((lepton_frame_packet[0]&0xf) != 0x0f))
 	{
 		frame_number = lepton_frame_packet[1];
@@ -129,6 +130,7 @@ int transfer(int fd)
 			}
 		}
 	}
+	printf("frame number: %d \n",frame_number);
 	return frame_number;
 }
 
@@ -187,6 +189,8 @@ int main(int argc, char *argv[])
 	printf("spi mode: %d\n", mode);
 	printf("bits per word: %d\n", bits);
 	printf("max speed: %d Hz (%d KHz)\n", speed, speed/1000);
+
+	printf("fd number: %d\n",fd);
 
 	while(transfer(fd)!=59){}
 
