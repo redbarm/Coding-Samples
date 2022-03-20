@@ -22,6 +22,7 @@ int main()
     std::cout<<"After the function call a = "<<a<<"\n";
     std::cout<<"After the function call ref = "<<ref<<"\n";
     return 0;
+
 }
 void increment(int &input)//Note the addition of '&'
 {
